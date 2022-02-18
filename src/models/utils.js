@@ -9,3 +9,5 @@ export const median = (numbers) => {
   }
   return (arr[half - 1] + arr[half]) / 2;
 };
+
+export const getRandomInt = (max) => Math.floor(Math.random() * max);

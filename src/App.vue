@@ -6,6 +6,9 @@ import { median } from "./models/utils.js"
 
 import WorldMap from './components/WorldMap.vue'
 import Question from './components/Question.vue'
+import Result from './components/Result.vue'
+
+import {result_sample} from "./config/sampleData.js";
 
 const resetKey = ref(0)
 const data = reactive({
@@ -51,10 +54,18 @@ const setData = (subregionName) => {
 } 
 
 const gameStart = () => data.playing = true; 
-const gameEnd = () => {
+const gameEnd = (flags) => {
+  commitStore(flags)
+  result.value = ""
   initData()
   resetKey.value ++
 } 
+const commitStore = (flags) => {
+  console.log("fireStoreに保存処理",flags);
+}
+
+const result = ref(result_sample)
+const showResultModal = (res) =>  result.value = res;
 
 const question = ref("")
 const pushQuestion = (q) => question.value = q; 
@@ -71,6 +82,9 @@ const pushQuestion = (q) => question.value = q;
       <Question v-if="data.playing"
        :countries="data.countries"
        :question="question" />
+      <Result v-if="result" 
+       :result="result"
+       @close-result="gameEnd" />
       <template v-if="data.countries">
         <div class="d-flex justify-center">
           <h2>
@@ -86,7 +100,7 @@ const pushQuestion = (q) => question.value = q;
        :countries="data.countries"
        :scale="data.scale || con.initialize.scale"
        :latlng="data.latlng || con.initialize.latlng"
-       @end-game="gameEnd"
+       @end-game="showResultModal"
        @push-question="pushQuestion"/>
     </v-main>
   </v-app>

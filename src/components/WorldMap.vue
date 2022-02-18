@@ -26,10 +26,15 @@ const question = ref("")
 const answer = ref("");
 
 watch(latlng, () => updateView());
-watch(answer, () => playing.value ? game.value.judge(answer.value, question.value.answer) : answer.value = "")
-watch(playing, () => playing.value ? gameFacilitator(new Game(props.countries, map.value, markers.value, props.latlng)): "")
+watch(answer, () => {
+  console.log("answer", answer.value);
+  playing.value ? (game.value.judge(answer.value, question.value) ? next(question.value) : "" ): answer.value = ""
+})
+watch(playing, () => playing.value ? game.value = new Game(props.countries, map.value, markers.value, props.latlng): "")
+watch(game, () => start())
 
 onMounted(() => initView());
+
 const initView = () => {
   const L = inject("L");
   const options = {
@@ -57,26 +62,29 @@ const updateView = () => {
   if (props.countries) {
     markers.value = props.countries.map(c => createMarker(L, c).addTo(map.value)).map(marker => marker.on("click", (e) => answer.value = [e.latlng.lat, e.latlng.lng].toString()));
   }
+  
 }
 
-const gameFacilitator = (gameData) => {
-  game.value = gameData
+const start = () => {
+  console.log("start!");
   game.value.start()
-  game.value.createQuestion()
-  // emits question
   question.value = game.value.pushQuestion();
   emits("push-question", question.value);
-  // loop
-  // game.value.pushQuestion()
-  // game.value.checkAnswer()
-  
-  // if (question.length) {
-  //   nextQuesstion()
-  // } else {
-  //   game.clear()
-  //   emits("end-game")
-  // }
 }
+
+const next = (prevQuestion) => {
+  console.log("next!");
+  console.log("data", game.value.data.length);
+  map.value.removeLayer(prevQuestion.marker);
+  if (game.value.data.length === 0) {
+    clear();
+  } else {
+    question.value = game.value.pushQuestion();
+    emits("push-question", question.value);
+  }
+}
+
+const clear = () => emits("end-game", game.value.clear());
 
 </script>
 
