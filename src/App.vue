@@ -91,10 +91,12 @@ const showResultModal = (res) =>  result.value = res;
 const question = ref("")
 const pushQuestion = (q) => question.value = q; 
 
-const collection = ref("")
-const fetchCollection = (countryName) => {
-  fetchCountryData(con.api, `name/${countryName}`)
-}
+const countryData = ref({})
+const fetchOneCountry = async (countryName) => {
+  console.log(countryName);
+  countryData.value = await fetchCountryData(con.api, `name/${countryName}`);
+  console.log(countryData.value);
+} 
 
 </script>
 
@@ -113,7 +115,8 @@ const fetchCollection = (countryName) => {
       <h1 class="text-center">World Flag Collection</h1>
       <Collection v-if="showCollection"
        :userData="user"
-       @collection-flag-click="fetchCollection" />
+       :countryData="countryData"
+       @collection-flag-click="fetchOneCountry" />
       <Menu v-if="!data.playing"
        :subregions="data.subregions"
        @menu-subregion-click="setData"/>

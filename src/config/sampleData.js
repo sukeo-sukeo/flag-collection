@@ -124,7 +124,7 @@ export const result_sample2 = {
       img: "https://flagcdn.com/nc.svg",
       name: "ニューカレドニア2",
       marker: "",
-      api_name: "united",
+      api_name: "United States",
       dataIdx: 2,
     },
   ],
