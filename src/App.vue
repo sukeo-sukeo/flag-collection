@@ -3,12 +3,15 @@ import { defineAsyncComponent, onMounted, reactive, ref } from "vue";
 import { con } from "./config/config.js";
 import { fetchCountryData, getRegions, getSubRegions } from "./models/countries.js"
 import { median } from "./models/utils.js"
+import { getData, addData,checkUserInFireStore, addUserInFireStore } from "./models/database/firestore.js"
+import {login, logout, onAuthCheck} from "./models/auth/fireauth.js";
 
 import WorldMap from './components/WorldMap.vue'
 import Question from './components/Question.vue'
 import Result from './components/Result.vue'
+import Collection from './components/Collection.vue'
 
-import {result_sample} from "./config/sampleData.js";
+import {result_sample2} from "./config/sampleData.js";
 
 const resetKey = ref(0)
 const data = reactive({
@@ -19,7 +22,25 @@ const data = reactive({
   // scale: {},
   // current: {},
   // cs: {},
-})
+});
+const user = ref("");
+(async () => {
+  user.value = await onAuthCheck();
+  console.log(user.value);
+})()
+
+const loginM = async () => {
+  user.value = await login()
+  console.log(user.value);
+} 
+const logoutM = () => {
+  logout();
+  user.value = ""
+  }
+
+const showCollection = ref(false)
+const openCollection = () => showCollection.value = !showCollection.value;
+
 const Menu = defineAsyncComponent(() => {
   initData()
   return import('./components/Menu.vue');
@@ -27,7 +48,7 @@ const Menu = defineAsyncComponent(() => {
 
 const initData = async () => {
   console.log("initData!");
-  data.full = await fetchCountryData(con.api)
+  data.full = await fetchCountryData(con.api, "all")
   data.regions = getRegions(data.full)
   data.subregions = getSubRegions(data.full)
   data.latlng = con.initialize.latlng
@@ -35,6 +56,7 @@ const initData = async () => {
   data.countries = null
   data.playing = false
 }
+
 
 const getTargetCountries = (subregionName, data) => data.filter(d => d.subregion === subregionName);
 
@@ -53,6 +75,7 @@ const setData = (subregionName) => {
   data.current = subregionName
 } 
 
+
 const gameStart = () => data.playing = true; 
 const gameEnd = (flags) => {
   commitStore(flags)
@@ -60,22 +83,37 @@ const gameEnd = (flags) => {
   initData()
   resetKey.value ++
 } 
-const commitStore = (flags) => {
-  console.log("fireStoreに保存処理",flags);
-}
+const commitStore = (flags) => addData(flags, user.value.uid);
 
-const result = ref(result_sample)
+const result = ref("")
 const showResultModal = (res) =>  result.value = res;
 
 const question = ref("")
 const pushQuestion = (q) => question.value = q; 
+
+const collection = ref("")
+const fetchCollection = (countryName) => {
+  fetchCountryData(con.api, `name/${countryName}`)
+}
 
 </script>
 
 <template>
   <v-app>
     <v-main>
+      <v-btn @click="loginM">
+        login
+      </v-btn>
+      <v-btn @click="logoutM">
+        logout
+      </v-btn>
+      <v-btn @click="openCollection">
+        collection
+      </v-btn>
       <h1 class="text-center">World Flag Collection</h1>
+      <Collection v-if="showCollection"
+       :userData="user"
+       @collection-flag-click="fetchCollection" />
       <Menu v-if="!data.playing"
        :subregions="data.subregions"
        @menu-subregion-click="setData"/>

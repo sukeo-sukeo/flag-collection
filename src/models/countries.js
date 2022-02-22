@@ -1,4 +1,4 @@
-export const fetchCountryData = async (url) => await (await fetch(url + "all")).json();
+export const fetchCountryData = async (url, api) => await (await fetch(url + api)).json();
 
 export const getRegions = (arry) => [
   ...new Set(arry.map((c) => c.region).filter((c) => c)),

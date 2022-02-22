@@ -104,3 +104,28 @@ export const result_sample = {
     },
   ],
 };
+
+export const result_sample2 = {
+  type: "clear",
+  ok: 2,
+  miss: 0,
+  rate: 2 / 2,
+  data: [
+    {
+      question: "-21.5,165.5",
+      img: "https://flagcdn.com/nc.svg",
+      name: "ニューカレドニア",
+      marker: "",
+      api_name: "peru",
+      dataIdx: 2,
+    },
+    {
+      question: "-21.5,165.5",
+      img: "https://flagcdn.com/nc.svg",
+      name: "ニューカレドニア2",
+      marker: "",
+      api_name: "united",
+      dataIdx: 2,
+    },
+  ],
+};
