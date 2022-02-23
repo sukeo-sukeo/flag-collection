@@ -7,6 +7,7 @@ const props = defineProps({
 
 onMounted(() => {
   console.log(props.countryData);
+  console.log(props.countryData[0].name.common);
 })
 </script>
 

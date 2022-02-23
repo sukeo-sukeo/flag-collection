@@ -11,10 +11,7 @@ const props = defineProps({
 
 const CollectionData = shallowRef({});
 const {countryData} = toRefs(props)
-watch(countryData, () => {
-  console.log(countryData.value);
-  CollectionData.value = defineAsyncComponent(() => import("./CollectionData.vue"))
-});
+watch(countryData, () => CollectionData.value = defineAsyncComponent(() => import("./CollectionData.vue")));
 
 
 const emits = defineEmits([
@@ -28,15 +25,19 @@ onMounted(async() => flags.value = await getData(props.userData.uid));
 
 <template>
 
-<h1>Collection</h1> 
-<div class="d-flex">
-  <span @click="emits('collection-flag-click', flag.api)" v-for="flag in flags" :key="flag">
-    {{flag.name}}
+<v-container fluid class="d-flex overflow-x-auto">
+  <span 
+   @click="emits('collection-flag-click', flag.api)"
+   v-for="flag in flags" :key="flag"
+   class="mx-1">
     <v-img width="100" :src="flag.img"></v-img>
+    <p class="font-italic text-caption text-truncate" style="width: 100px;">
+    {{flag.name}}
+    </p>
   </span>
-  <CollectionData
+  <CollectionData v-if="Object.keys(props.countryData).length"
   :countryData="countryData" />
-</div>
+</v-container>
 
 </template>
 

@@ -98,6 +98,6 @@ const clear = () => emits("end-game", game.value.clear());
 <style scoped>
 #mymap{
   width: 90%;
-  height: 80vh;
+  height: 68vh;
 }
 </style>

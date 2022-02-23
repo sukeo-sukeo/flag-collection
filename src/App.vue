@@ -6,6 +6,7 @@ import { median } from "./models/utils.js"
 import { getData, addData,checkUserInFireStore, addUserInFireStore } from "./models/database/firestore.js"
 import {login, logout, onAuthCheck} from "./models/auth/fireauth.js";
 
+import Header from './components/Header.vue'
 import WorldMap from './components/WorldMap.vue'
 import Question from './components/Question.vue'
 import Result from './components/Result.vue'
@@ -102,24 +103,24 @@ const fetchOneCountry = async (countryName) => {
 
 <template>
   <v-app>
+    <Header
+     :isLogin="Object.keys(user).length ? true : false"
+     @login-click="loginM"
+     @logout-click="logoutM"
+     @collection-click="openCollection"
+      />
     <v-main>
-      <v-btn @click="loginM">
-        login
-      </v-btn>
-      <v-btn @click="logoutM">
-        logout
-      </v-btn>
-      <v-btn @click="openCollection">
-        collection
-      </v-btn>
-      <h1 class="text-center">World Flag Collection</h1>
-      <Collection v-if="showCollection"
-       :userData="user"
-       :countryData="countryData"
-       @collection-flag-click="fetchOneCountry" />
-      <Menu v-if="!data.playing"
-       :subregions="data.subregions"
-       @menu-subregion-click="setData"/>
+      <div style="height: 22vh;">
+        <Collection 
+        v-if="showCollection"
+        :userData="user"
+        :countryData="countryData"
+        @collection-flag-click="fetchOneCountry" />
+        <Menu 
+        v-if="!data.playing && !showCollection"
+        :subregions="data.subregions"
+        @menu-subregion-click="setData"/>
+      </div>
       <Question v-if="data.playing"
        :countries="data.countries"
        :question="question" />

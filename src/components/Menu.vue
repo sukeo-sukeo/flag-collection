@@ -13,13 +13,13 @@ const emits = defineEmits([
 
 </script>
 <template>
-  <v-container class="d-flex flex-wrap justify-center">
-    <v-btn class="ma-2"
+  <div class="d-flex flex-wrap justify-center">
+    <v-btn class="my-1 mx-2"
      v-for="sr in props.subregions" :key="sr"
      @click="emits('menu-subregion-click', sr)">
       {{ sr }}
     </v-btn>
-  </v-container>
+  </div>
 </template>
 
 <style>
